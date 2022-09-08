@@ -86,7 +86,7 @@ try {
       }
     ]
   };
-  
+
 
 
   const idGenerator = () => {
@@ -100,13 +100,13 @@ try {
     return id;
   };
 
-  const correctProductDetails = ({ title, description, categoryId, price, img }) => 
+  const correctProductDetails = ({ title, description, categoryId, price, img }) =>
     title !== undefined && typeof title === 'string' && title !== '' &&
     description !== undefined && typeof description === 'string' && description !== '' &&
     categoryId !== undefined && typeof categoryId === 'number' && categoryId !== '' &&
     price !== undefined && typeof price === 'number' && price > 0 &&
     img !== undefined && typeof img === 'string' && img !== '';
- 
+
   // GET all
   server.get('/products', (req, res) => {
     res.status(200).json(database.products);
@@ -115,7 +115,7 @@ try {
   // GET one
   server.get('/products/:id', (req, res) => {
     const productId = req.params.id;
- 
+
     try {
       const product = database.products.find(prdct => prdct.id === String(productId));
 
@@ -128,7 +128,7 @@ try {
 
     } catch (error) {
       if (error instanceof Error) {
-        res.status(500).json({ message: 'An error has occurred'})
+        res.status(500).json({ message: 'An error has occurred' })
       } else {
         const { message, status } = error;
         res.status(status).json({ message });
@@ -141,11 +141,11 @@ try {
     const newProductDetails = req.body;
 
     try {
-      if (!correctProductDetails(newProductDetails)) 
-      throw ({
-        message: 'Provided details about the product are invalid',
-        status: 400
-      });
+      if (!correctProductDetails(newProductDetails))
+        throw ({
+          message: 'Provided details about the product are invalid',
+          status: 400
+        });
 
       const newProduct = {
         id: idGenerator(),
@@ -163,17 +163,17 @@ try {
 
   // PUT
   server.put('/products/:id', (req, res) => {
-    const productId = req.params.id; 
+    const productId = req.params.id;
     const newProductDetails = req.body;
 
     try {
-      if (!correctProductDetails(newProductDetails)) throw ({ 
+      if (!correctProductDetails(newProductDetails)) throw ({
         message: `Provided details about the product are invalid`,
         status: 400
       });
 
-      const productInDatabase = database.products.find(prdct => prdct.id === String(productId)); 
-      if (productInDatabase === undefined) throw ({ 
+      const productInDatabase = database.products.find(prdct => prdct.id === String(productId));
+      if (productInDatabase === undefined) throw ({
         message: `Product with id '${productId}' was not found`,
         status: 404
       });
@@ -182,25 +182,43 @@ try {
       productInDatabase.description = newProductDetails.description;
       productInDatabase.categoryId = newProductDetails.categoryId;
       productInDatabase.price = newProductDetails.price;
-      productInDatabase.img = newProductDetails.img ;
-      
+      productInDatabase.img = newProductDetails.img;
+
       res.status(200).json(newProductDetails);
 
     } catch ({ status, message }) {
       res.status(status).json({ message });
-    }    
+    }
   });
 
   // DELETE
-  
+  server.delete('/products/:id', (req, res) => {
+    const productId = req.params.id;
+
+    try {
+      const productInDatabaseIndex = database.products.findIndex(({ id }) => id === productId);
+      if (productInDatabaseIndex === -1) throw ({
+        message: `Product with id '${productId}' was not found`,
+        status: 404
+      });
+
+      const [deletedProduct] = database.products.splice(productInDatabaseIndex, 1);
+
+      res.status(200).json(deletedProduct);
+      
+    } catch ({ status, message }) {
+      res.status(status).json({ message });
+    };
+  })
+
   server.listen(SERVER_PORT, (err) => {
     if (err) (
       console.error('Something went wrong when starting the server')
-      )
-      
-      console.log(`Server is running on ${SERVER_PROTOCOL}://${SERVER_DOMAIN}:${SERVER_PORT}`);
-    });
-    
-  } catch (err) {
-    console.log(err.message);
-  };
+    )
+
+    console.log(`Server is running on ${SERVER_PROTOCOL}://${SERVER_DOMAIN}:${SERVER_PORT}`);
+  });
+
+} catch (err) {
+  console.log(err.message);
+};
