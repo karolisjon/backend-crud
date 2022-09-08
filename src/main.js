@@ -157,17 +157,33 @@ try {
       res.status(201).json(newProduct);
 
     } catch ({ status, message }) {
-      console.log({
-        status,
-        message
-      })
       res.status(status).json({ message });
     };
   });
 
   // PUT
+  server.put('/products/:id', (req, res) => {
+    const productId = req.params.id; 
+    const newProductDetails = req.body;
 
-  // PATCH
+    const productInDatabase = database.products.find(prdct => prdct.id === String(productId)); 
+
+    if (!correctProductDetails(newProductDetails)) {
+      res.status(400).json({
+        message: `Product with id '${productId}' was not found`
+      });
+
+    return;  
+    }
+
+    productInDatabase.title = newProductDetails.title;
+    productInDatabase.description = newProductDetails.description;
+    productInDatabase.categoryId = newProductDetails.categoryId;
+    productInDatabase.price = newProductDetails.price;
+    productInDatabase.img = newProductDetails.img ;
+    
+    res.status(200).json(newProductDetails)
+  });
 
   // DELETE
   
