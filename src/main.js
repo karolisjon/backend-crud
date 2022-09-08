@@ -100,13 +100,12 @@ try {
     return id;
   };
 
-  const correctProductDetails = ({ title }) => {
-    title !== undefined && typeof title === 'string' && title !== '';
-    // description !== undefined && typeof description === 'string' && description !== ''
-    // categoryId !== undefined && typeof categoryId === 'number' && categoryId !== '' &&
-    // price !== undefined && typeof price === 'number' && price > 0 &&
-    // img !== undefined && typeof img === 'string' && img !== '';
-  };
+  const correctProductDetails = ({ title, description, categoryId, price, img }) => 
+    title !== undefined && typeof title === 'string' && title !== '' &&
+    description !== undefined && typeof description === 'string' && description !== '' &&
+    categoryId !== undefined && typeof categoryId === 'number' && categoryId !== '' &&
+    price !== undefined && typeof price === 'number' && price > 0 &&
+    img !== undefined && typeof img === 'string' && img !== '';
  
   // GET all
   server.get('/products', (req, res) => {
@@ -158,6 +157,10 @@ try {
       res.status(201).json(newProduct);
 
     } catch ({ status, message }) {
+      console.log({
+        status,
+        message
+      })
       res.status(status).json({ message });
     };
   });
