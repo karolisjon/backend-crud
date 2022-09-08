@@ -98,12 +98,12 @@ try {
       const product = products.find(prdct => prdct.id === productId);
 
       if (product === undefined) throw ({
-        message: 'Product does not exist',
+        message: `Product with id '${productId}' does not exist`,
         status: 404
       })
 
       res.status(200).json(product);
-      
+
     } catch ({ message, status }) {
       res.status(status).json({ message });
     }
