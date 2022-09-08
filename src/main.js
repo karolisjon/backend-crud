@@ -143,7 +143,7 @@ try {
     try {
       if (!correctProductDetails(newProductDetails)) 
       throw ({
-        message: 'Provided data about the product is invalid',
+        message: 'Provided details about the product are invalid',
         status: 400
       });
 
@@ -166,23 +166,29 @@ try {
     const productId = req.params.id; 
     const newProductDetails = req.body;
 
-    const productInDatabase = database.products.find(prdct => prdct.id === String(productId)); 
-
-    if (!correctProductDetails(newProductDetails)) {
-      res.status(400).json({
-        message: `Product with id '${productId}' was not found`
+    try {
+      if (!correctProductDetails(newProductDetails)) throw ({ 
+        message: `Provided details about the product are invalid`,
+        status: 400
       });
 
-    return;  
-    }
+      const productInDatabase = database.products.find(prdct => prdct.id === String(productId)); 
+      if (productInDatabase === undefined) throw ({ 
+        message: `Product with id '${productId}' was not found`,
+        status: 404
+      });
 
-    productInDatabase.title = newProductDetails.title;
-    productInDatabase.description = newProductDetails.description;
-    productInDatabase.categoryId = newProductDetails.categoryId;
-    productInDatabase.price = newProductDetails.price;
-    productInDatabase.img = newProductDetails.img ;
-    
-    res.status(200).json(newProductDetails)
+      productInDatabase.title = newProductDetails.title;
+      productInDatabase.description = newProductDetails.description;
+      productInDatabase.categoryId = newProductDetails.categoryId;
+      productInDatabase.price = newProductDetails.price;
+      productInDatabase.img = newProductDetails.img ;
+      
+      res.status(200).json(newProductDetails);
+
+    } catch ({ status, message }) {
+      res.status(status).json({ message });
+    }    
   });
 
   // DELETE
