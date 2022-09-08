@@ -95,7 +95,7 @@ try {
     const productId = req.params.id;
  
     try {
-      const product = products.find(prdct => prdct.id === productId);
+      const product = products.find(prdct => prdct.id === String(productId));
 
       if (product === undefined) throw ({
         message: `Product with id '${productId}' does not exist`,
