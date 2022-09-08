@@ -93,8 +93,22 @@ try {
   // GET one
   server.get('/products/:id', (req, res) => {
     const productId = req.params.id;
-    res.status(200).json(productId);
+ 
+    try {
+      const product = products.find(prdct => prdct.id === productId);
+
+      if (product === undefined) throw ({
+        message: 'Product does not exist',
+        status: 404
+      })
+
+      res.status(200).json(product);
+      
+    } catch ({ message, status }) {
+      res.status(status).json({ message });
+    }
   });
+
   // POST
 
   // PUT
