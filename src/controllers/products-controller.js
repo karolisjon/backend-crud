@@ -1,4 +1,4 @@
-const { correctProductDetails } = require('../helpers/index');
+const {correctProductDetails} = require('../helpers/index');
 const ProductModel = require('../models/product-model');
 
 const fetchAll = async (req, res) => {
@@ -31,6 +31,7 @@ const fetchOne = async (req, res) => {
 
 const post = async (req, res) => {
   const newProductDetails = req.body;
+  console.log(1);
 
   try {
     if (!correctProductDetails(newProductDetails))
