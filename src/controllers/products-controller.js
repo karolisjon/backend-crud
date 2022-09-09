@@ -49,7 +49,7 @@ const post = async (req, res) => {
   };
 };
 
-const put = (req, res) => {
+const put = async (req, res) => {
   const productId = req.params.id;
   const newProductDetails = req.body;
 
@@ -59,19 +59,18 @@ const put = (req, res) => {
       status: 400
     });
 
-    const productInDatabase = database.products.find(prdct => prdct.id === String(productId));
-    if (productInDatabase === undefined) throw ({
+    const updatedProduct = await ProductModel.findByIdAndUpdate(
+      productId,
+      newProductDetails,
+      { new: true, runValidators: true }
+    );
+
+    if (updatedProduct === null) throw ({
       message: `Product with id '${productId}' was not found`,
       status: 404
     });
 
-    productInDatabase.title = newProductDetails.title;
-    productInDatabase.description = newProductDetails.description;
-    productInDatabase.categoryId = newProductDetails.categoryId;
-    productInDatabase.price = newProductDetails.price;
-    productInDatabase.img = newProductDetails.img;
-
-    res.status(200).json(newProductDetails);
+    res.status(200).json(updatedProduct);
 
   } catch ({ status, message }) {
     res.status(status).json({ message });
