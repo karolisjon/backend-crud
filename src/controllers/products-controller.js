@@ -77,25 +77,23 @@ const put = async (req, res) => {
   }
 };
 
-const remove = (req, res) => {
+const remove = async (req, res) => {
   const productId = req.params.id;
 
   try {
-    const productInDatabaseIndex = database.products.findIndex(({ id }) => id === productId);
-    if (productInDatabaseIndex === -1) throw ({
+    const removedProduct = await ProductModel.findByIdAndDelete(productId);
+
+    if (removedProduct === null) throw ({
       message: `Product with id '${productId}' was not found`,
       status: 404
     });
 
-    const [deletedProduct] = database.products.splice(productInDatabaseIndex, 1);
-
-    res.status(200).json(deletedProduct);
+    res.status(200).json(removedProduct);
     
   } catch ({ status, message }) {
     res.status(status).json({ message });
   };
 };
-
 
 module.exports = {
   fetchAll,
