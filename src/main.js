@@ -2,12 +2,13 @@ const express = require('express');
 const productRouter = require('./routers/products-router');
 const morgan = require('morgan');
 const cors = require('cors');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const server = express();
 
-const { SERVER_DOMAIN, SERVER_PROTOCOL, SERVER_PORT } = process.env;
-const constantsConfiguredInEnv = SERVER_DOMAIN && SERVER_PROTOCOL && SERVER_PORT;
+const { SERVER_DOMAIN, SERVER_PROTOCOL, SERVER_PORT, DB_CONNECTION_ADMIN } = process.env;
+const constantsConfiguredInEnv = SERVER_DOMAIN && SERVER_PROTOCOL && SERVER_PORT && DB_CONNECTION_ADMIN;
 
 try {
   if ((!constantsConfiguredInEnv)) {
@@ -15,16 +16,25 @@ try {
   }
 
   server.use(express.json());
-  server.use('/products', productRouter);
   server.use(morgan('tiny'));
   server.use(cors());
 
-  server.listen(SERVER_PORT, (err) => {
-    if (err) (
-      console.error('Something went wrong when starting the server')
-    )
+  server.use('/products', productRouter);
 
-    console.log(`Server is running on ${SERVER_PROTOCOL}://${SERVER_DOMAIN}:${SERVER_PORT}`);
+  mongoose.connect(DB_CONNECTION_ADMIN, (err) => {
+    if (err) { 
+      throw err.message;
+    }
+
+    console.log('Connected to MongoDB Atlass');
+    
+    server.listen(SERVER_PORT, (err) => {
+      if (err) (
+        console.error(err.message)
+      )
+  
+      console.log(`Server is running on ${SERVER_PROTOCOL}://${SERVER_DOMAIN}:${SERVER_PORT}`);
+    });
   });
 
 } catch (err) {
