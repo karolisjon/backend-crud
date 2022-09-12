@@ -12,7 +12,7 @@ const fetchOne = async (req, res) => {
   try {
     const product = await ProductModel.findById(productId);
 
-    if (product === undefined) throw ({
+    if (product === null) throw ({
       message: `Product with id '${productId}' does not exist`,
       status: 404
     })
