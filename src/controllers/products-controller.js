@@ -31,7 +31,6 @@ const fetchOne = async (req, res) => {
 
 const post = async (req, res) => {
   const newProductDetails = req.body;
-  console.log(1);
 
   try {
     if (!correctProductDetails(newProductDetails))
