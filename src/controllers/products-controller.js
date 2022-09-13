@@ -1,5 +1,17 @@
 const {correctProductDetails} = require('../helpers/index');
 const ProductModel = require('../models/product-model');
+const {
+  RequestError, 
+  createInvalidDataErr, 
+  createNotFoundErr, 
+  formatRequestErrResponse
+} = require('../helpers/errors/index');
+
+const createIdDoesNotExistErr = (productId) => 
+createNotFoundErr(`Product with id '${productId}' does not exist`);
+
+const createInvalidDetailsErr = (dataObj) => 
+createInvalidDataErr('Provided details about the product are invalid');
 
 const fetchAll = async (req, res) => {
   const productDocuments = await ProductModel.find() 
@@ -12,21 +24,14 @@ const fetchOne = async (req, res) => {
   try {
     const product = await ProductModel.findById(productId);
 
-    if (product === null) throw ({
-      message: `Product with id '${productId}' does not exist`,
-      status: 404
-    })
+    if (product === null) throw createIdDoesNotExistErr(productId);
 
     res.status(200).json(product);
 
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: 'An error has occurred' })
-    } else {
-      const { message, status } = error;
-      res.status(status).json({ message });
-    };
-  };
+  } catch (err) {
+    const {status, message} = formatRequestErrResponse(err);
+    res.status(status).json({message});
+  }
 };
 
 const post = async (req, res) => {
@@ -34,10 +39,7 @@ const post = async (req, res) => {
 
   try {
     if (!correctProductDetails(newProductDetails))
-      throw ({
-        message: 'Provided details about the product are invalid',
-        status: 400
-      });
+      throw createInvalidDetailsErr(newProductDetails);
 
     const newProduct = await ProductModel.create(newProductDetails);
 
@@ -53,10 +55,7 @@ const put = async (req, res) => {
   const newProductDetails = req.body;
 
   try {
-    if (!correctProductDetails(newProductDetails)) throw ({
-      message: `Provided details about the product are invalid`,
-      status: 400
-    });
+    if (!correctProductDetails(newProductDetails)) throw createInvalidDataErr(newProductDetails);
 
     const updatedProduct = await ProductModel.findByIdAndUpdate(
       productId,
@@ -64,10 +63,7 @@ const put = async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    if (updatedProduct === null) throw ({
-      message: `Product with id '${productId}' was not found`,
-      status: 404
-    });
+    if (updatedProduct === null) throw createIdDoesNotExistErr(productId);
 
     res.status(200).json(updatedProduct);
 
@@ -82,10 +78,7 @@ const remove = async (req, res) => {
   try {
     const removedProduct = await ProductModel.findByIdAndDelete(productId);
 
-    if (removedProduct === null) throw ({
-      message: `Product with id '${productId}' was not found`,
-      status: 404
-    });
+    if (removedProduct === null) throw createIdDoesNotExistErr(productId);
 
     res.status(200).json(removedProduct);
     
