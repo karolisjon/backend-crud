@@ -1,10 +1,9 @@
 const {correctProductDetails} = require('../helpers/index');
 const ProductModel = require('../models/product-model');
 const {
-  RequestError, 
   createInvalidDataErr, 
   createNotFoundErr, 
-  formatRequestErrResponse
+  sendErrorResponse,
 } = require('../helpers/errors/index');
 
 const createIdDoesNotExistErr = (productId) => 
@@ -14,8 +13,11 @@ const createInvalidDetailsErr = (dataObj) =>
 createInvalidDataErr('Provided details about the product are invalid');
 
 const fetchAll = async (req, res) => {
-  const productDocuments = await ProductModel.find() 
-  res.status(200).json(productDocuments);
+  try {
+    const productDocuments = await ProductModel.find() 
+    
+    res.status(200).json(productDocuments);
+  } catch (err) {sendErrorResponse(err, res);}
 };
 
 const fetchOne = async (req, res) => {
@@ -28,10 +30,7 @@ const fetchOne = async (req, res) => {
 
     res.status(200).json(product);
 
-  } catch (err) {
-    const {status, message} = formatRequestErrResponse(err);
-    res.status(status).json({message});
-  }
+  } catch (err) {sendErrorResponse(err, res);}
 };
 
 const post = async (req, res) => {
@@ -45,9 +44,7 @@ const post = async (req, res) => {
 
     res.status(201).json(newProduct);
 
-  } catch ({ status, message }) {
-    res.status(status).json({ message });
-  };
+  } catch (err) {sendErrorResponse(err, res);}
 };
 
 const put = async (req, res) => {
@@ -67,9 +64,7 @@ const put = async (req, res) => {
 
     res.status(200).json(updatedProduct);
 
-  } catch ({ status, message }) {
-    res.status(status).json({ message });
-  }
+  } catch (err) {sendErrorResponse(err, res);}
 };
 
 const remove = async (req, res) => {
@@ -82,9 +77,7 @@ const remove = async (req, res) => {
 
     res.status(200).json(removedProduct);
     
-  } catch ({ status, message }) {
-    res.status(status).json({ message });
-  };
+  } catch (err) {sendErrorResponse(err, res);}
 };
 
 module.exports = {

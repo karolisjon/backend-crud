@@ -10,35 +10,30 @@ const createNotFoundErr = (message) => new RequestError({
   statusCode: 404
 });
 
-const formatRequestErrResponse = (err) => {
-  if (typeof err === 'string') {
-    return {
-      message: err,
-      status: 400
-    };
-  } else if (err instanceof Error) {
-    return {
-      message: err.message,
-      status: 400
-    };
-  } else if (err instanceof RequestError) {
-    return {
-      message: err.message,
-      status: err.statusCode
-    };
-  } else {
-    return {
-      message: 'Request handler error occurred',
-      status: 400
-    };
-  }
-};
+const sendErrorResponse = (err, res) => {
+  let message;
+  let status = 400;
 
+  if (typeof err === 'string') {
+      message =  err;
+  } else if (err instanceof Error) {
+      message =  err.message;
+  } else if (err instanceof RequestError) {
+      message =  err.message;
+      status = err.statusCode;
+  } else {
+      message =  'Request handler error occurred';
+      status = 400;
+  }
+
+  res.status(status).json({message});
+};
+;
 const errorCreators = {
   RequestError,
   createInvalidDataErr,
   createNotFoundErr,
-  formatRequestErrResponse,
+  sendErrorResponse,
 };
 
 module.exports = errorCreators;
