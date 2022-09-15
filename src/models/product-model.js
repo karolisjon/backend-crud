@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, Types } = require('mongoose');
 const yup = require('yup');
 
 const productSchema = Schema({
@@ -11,7 +11,8 @@ const productSchema = Schema({
     required: true,
   },
   categoryId: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'Category',
     required: true,
   },
   price: {
@@ -28,20 +29,23 @@ const productSchema = Schema({
 
 const productValidationSchema = yup.object().shape({
   title: yup
-    .string('product.title must always be a string')
+    .string().typeError('product.title must always be a string')
     .required('product.title is mandatory'),
   description: yup
-    .string('product.description must always be a string')
+    .string().typeError('product.description must always be a string')
     .required('product.description is mandatory'),
   categoryId: yup
-    .string('product.categoryId must always be a string')
+    .string().typeError('product.categoryId must always be a string')
+    .test('is-object-id', 
+    'product.categoryId must be a valid MongoDB object Id',
+    Types.ObjectId.isValid)
     .required('product.categoryId is mandatory'),
   price: yup
-    .number('product.price must always be a number')
+    .number().typeError('product.price must always be a number')
     .required('product.price is mandatory')
     .positive('product.price must be more than 0'),
   img: yup
-    .string('product.img must always be a string')
+    .string().typeError('product.img must always be a string')
     .required('product.img is mandatory'),
 });
 
