@@ -11,7 +11,7 @@ const productSchema = Schema({
     required: true,
   },
   categoryId: {
-    type: Number,
+    type: String,
     required: true,
   },
   price: {

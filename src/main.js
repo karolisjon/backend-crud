@@ -18,6 +18,7 @@ try {
   server.use(express.json());
   server.use(morgan('tiny'));
   server.use(cors());
+  server.use(express.static('public'));
 
   server.use('/products', productRouter);
 
