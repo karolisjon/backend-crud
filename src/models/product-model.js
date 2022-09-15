@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 const yup = require('yup');
 
-const productStructureSchema = Schema({
+const productSchema = Schema({
   title: {
     type: String,
     required: true,
@@ -26,25 +26,27 @@ const productStructureSchema = Schema({
   timestamps: true
 });
 
-const validationSchema = yup.object().shape({
+const productValidationSchema = yup.object().shape({
   title: yup
-    .string('Title must always be a string')
-    .required('Title is mandatory'),
+    .string('product.title must always be a string')
+    .required('product.title is mandatory'),
   description: yup
-    .string('Description must always be a string')
-    .required('Description is mandatory'),
+    .string('product.description must always be a string')
+    .required('product.description is mandatory'),
   categoryId: yup
-    .string('categoryId must always be a string')
-    .required('categoryId is mandatory'),
+    .string('product.categoryId must always be a string')
+    .required('product.categoryId is mandatory'),
   price: yup
-    .number('Price must always be a number')
-    .required('Price is mandatory')
-    .positive('Price must be more than 0'),
+    .number('product.price must always be a number')
+    .required('product.price is mandatory')
+    .positive('product.price must be more than 0'),
   img: yup
-    .string('img must always be a string')
-    .required('img is mandatory'),
+    .string('product.img must always be a string')
+    .required('product.img is mandatory'),
 });
 
-const ProductModel = model('Product', productStructureSchema);
+productSchema.statics.validate = (productData) => productValidationSchema.validateSync(productData);
+
+const ProductModel = model('Product', productSchema);
 
 module.exports = ProductModel;

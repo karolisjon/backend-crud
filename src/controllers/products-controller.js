@@ -1,4 +1,4 @@
-const {correctProductDetails} = require('../helpers/index');
+// const {correctProductDetails} = require('../helpers/index');
 const ProductModel = require('../models/product-model');
 const {
   createInvalidDataErr, 
@@ -37,8 +37,7 @@ const post = async (req, res) => {
   const newProductDetails = req.body;
 
   try {
-    if (!correctProductDetails(newProductDetails))
-      throw createInvalidDetailsErr(newProductDetails);
+    ProductModel.validate(newProductDetails)
 
     const newProduct = await ProductModel.create(newProductDetails);
 
@@ -52,7 +51,7 @@ const put = async (req, res) => {
   const newProductDetails = req.body;
 
   try {
-    if (!correctProductDetails(newProductDetails)) throw createInvalidDataErr(newProductDetails);
+    if (!ProductModel.validate(newProductDetails)) throw createInvalidDataErr(newProductDetails);
 
     const updatedProduct = await ProductModel.findByIdAndUpdate(
       productId,
