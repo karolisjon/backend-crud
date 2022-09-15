@@ -41,6 +41,3 @@ try {
 } catch (err) {
   console.log(err.message);
 };
-
-
-// 00:43
