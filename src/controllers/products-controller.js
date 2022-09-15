@@ -50,7 +50,7 @@ const put = async (req, res) => {
   const newProductDetails = req.body;
 
   try {
-    if (!ProductModel.validate(newProductDetails)) throw createInvalidDataErr(newProductDetails);
+    ProductModel.validate(newProductDetails)
 
     const updatedProduct = await ProductModel.findByIdAndUpdate(
       productId,

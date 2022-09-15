@@ -25,6 +25,6 @@ const categoryValidationSchema = yup.object().shape({
 
 categorySchema.statics.validate = (categoryData) => categoryValidationSchema.validateSync(categoryData);
 
-const CategoryModel = model('Category', productSchema);
+const CategoryModel = model('Category', categorySchema);
 
 module.exports = CategoryModel;

@@ -1,9 +1,10 @@
 const express = require('express');
-const productRouter = require('./routers/products-router');
 const morgan = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
+
+const apiRouter = require('./routers/api-router');
 
 const server = express();
 
@@ -20,7 +21,7 @@ try {
   server.use(cors());
   server.use(express.static('public'));
 
-  server.use('/products', productRouter);
+  server.use('/api', apiRouter);
 
   mongoose.connect(DB_CONNECTION_ADMIN, (err) => {
     if (err) { 
