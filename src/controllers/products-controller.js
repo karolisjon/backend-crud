@@ -1,4 +1,3 @@
-// const {correctProductDetails} = require('../helpers/index');
 const ProductModel = require('../models/product-model');
 const {
   createInvalidDataErr, 
