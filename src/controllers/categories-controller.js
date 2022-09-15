@@ -11,7 +11,14 @@ createNotFoundErr(`Category with id '${catId}' does not exist`);
 const createInvalidDetailsErr = (dataObj) => 
 createInvalidDataErr('Provided details about the category are invalid');
 
+const propsToJoin = ['categoryId'];
+
 const fetchAll = async (req, res) => {
+  const query = req.query;
+
+  console.log('///////////////////////////////////////')
+  console.log(query);
+
   try {
     const categoryDocuments = await CategoryModel.find() 
     

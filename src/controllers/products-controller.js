@@ -12,8 +12,12 @@ const createInvalidDetailsErr = (dataObj) =>
 createInvalidDataErr('Provided details about the product are invalid');
 
 const fetchAll = async (req, res) => {
+  const { joinBy } = req.query;
+  
   try {
-    const productDocuments = await ProductModel.find() 
+    const productDocuments = joinBy === 'categoryId'
+    ? await ProductModel.find().populate('categoryId')
+    : await ProductModel.find();
     
     res.status(200).json(productDocuments);
   } catch (err) {sendErrorResponse(err, res);}
@@ -21,9 +25,12 @@ const fetchAll = async (req, res) => {
 
 const fetchOne = async (req, res) => {
   const productId = req.params.id;
+  const { joinBy } = req.query;
 
   try {
-    const product = await ProductModel.findById(productId);
+    const product = joinBy === 'categoryId'
+    ? await ProductModel.findById(productId).populate('categoryId')
+    : await ProductModel.findById(productId);
 
     if (product === null) throw createIdDoesNotExistErr(productId);
 
