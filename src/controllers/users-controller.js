@@ -74,21 +74,27 @@ const put = async (req, res) => {
       img
     } = requestData;
 
-    const replacedUser = await UserModel.findOneAndReplace(
+    const userDoc = await UserModel.findById(userId);
+    if (userDoc === null) throw createIdDoesNotExistErr(userId);
+
+    const replacedUserDoc = await UserModel.findOneAndReplace(
       { userId },
       {
         email,
         password: await hashPassword(password),
         role,
         cart,
-        img
+        img,
+        createdAt: userDoc.createdAt,
+        updatedAt: new Date(),
+        __v: userDoc.__v
       },
-      { new: true }
+      {
+        new: true,
+      }
     );
 
-    if (replacedUser === null) throw createIdDoesNotExistErr(userId);
-
-    res.status(200).json(replacedUser);
+    res.status(200).json(replacedUserDoc);
 
   } catch (err) { sendErrorResponse(err, res); }
 };
