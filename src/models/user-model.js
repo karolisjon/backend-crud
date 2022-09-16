@@ -10,11 +10,16 @@ const userSchema = Schema({
     type: String,
     required: true,
   },
+  role: {
+    type: String,
+    enum: ['USER', 'ADMIN'],
+    default: 'USER',
+  },
   cart: {
     type: [{
       productId: {
         type: Schema.Types.ObjectId,
-        ref: Product,
+        ref: 'Product',
         required: true,
       }
     }],
@@ -40,17 +45,22 @@ const userValidationSchema = yup.object({
       console.log('\n\nUserMode.find\n');
       console.log(UserModel.find);
       console.log('\n\n');
-      
+
       return true;
     })
     .required('user.email is mandatory'),
   password: yup
+    .string().typeError('user.password must always be a string')
+    .required('user.password is mandatory')
     .min(8, 'user.password must contain at least 8 symbols')
     .max(32, 'user.password must not be longer than 32 symbols')
     .matches(/[a-z]/, 'user.password must contain at least one lowercase letter')
     .matches(/[A-Z]/, 'user.password must contain at least one uppercase letter')
     .matches(/\d/, 'user.password must contain at least one number')
     .matches(/\W/, 'user.password must contain at least one special symbol'),
+  role: yup
+    .string().typeError('user.role must always be a string')
+    .oneOf(['USER', 'ADMIN']),
   cart: yup
     .array(yup.object({
       productId: yup

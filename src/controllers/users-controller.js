@@ -12,12 +12,13 @@ const createInvalidDetailsErr = (dataObj) =>
 createInvalidDataErr('Provided details about the product are invalid');
 
 const fetchAll = async (req, res) => {
-  const { joinBy } = req.query;
   
   try {
-    const userDocuments = joinBy === 'userId'
-    ? await UserModel.find().populate('userId')
-    : await UserModel.find();
+    const userDocuments = await UserModel.find();
+
+    const validationResult = UserModel.validate({
+       
+    })
     
     res.status(200).json(userDocuments);
   } catch (err) {sendErrorResponse(err, res);}
