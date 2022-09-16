@@ -22,38 +22,45 @@ const userSchema = Schema({
       type: Number,
       required: true,
     },
-    img: {
-      type: String,
-    }
   },
+  img: {
+    type: String,
+  }
 }, {
   timestamps: true
 });
-
-const productValidationSchema = yup.object().shape({
-  title: yup
-    .string().typeError('product.title must always be a string')
-    .required('product.title is mandatory'),
-  description: yup
-    .string().typeError('product.description must always be a string')
-    .required('product.description is mandatory'),
-  categoryId: yup
-    .string().typeError('product.categoryId must always be a string')
-    .test('is-object-id', 
-    'product.categoryId must be a valid MongoDB object Id',
-    Types.ObjectId.isValid)
-    .required('product.categoryId is mandatory'),
-  price: yup
-    .number().typeError('product.price must always be a number')
-    .required('product.price is mandatory')
-    .positive('product.price must be more than 0'),
+ 
+const userValidationSchema = yup.object({
+  email: yup
+    .string().typeError('user.email must always be a string')
+    .email('user.email format is invalid')
+    .required('user.email is mandatory'),
+  password: yup
+    .min(8, 'user.password must contain at least 8 symbols')
+    .max(32, 'user.password must not be longer than 32 symbols')
+    .matches(/[a-z]/, 'user.password must contain at least one lowercase letter')
+    .matches(/[A-Z]/, 'user.password must contain at least one uppercase letter')
+    .matches(/\d/, 'user.password must contain at least one number')
+    .matches(/\W/, 'user.password must contain at least one special symbol'),
+  cart: yup
+    .array(yup.object({
+      productId: yup
+        .string().typeError('user.cart element.productId must always be a string')
+        .test('is-object-id',
+          'user.cart element.productId must be a valid MongoDB object Id',
+          Types.ObjectId.isValid)
+        .required('user.cart element.productId is mandatory'),
+      amount: yup
+        .number().typeError('user.cart.amount must always be a number')
+        .required('user.cart.amount is mandatory')
+    }))
+    .required('user.categoryId is mandatory'),
   img: yup
-    .string().typeError('product.img must always be a string')
-    .required('product.img is mandatory'),
+    .string().typeError('user.img must always be a string')
 });
 
-userSchema.statics.validate = (productData) => productValidationSchema.validateSync(productData);
+userSchema.statics.validate = (userData) => userValidationSchema.validateSync(userData);
 
-const UserModel = model('Product', userSchema);
+const UserModel = model('User', userSchema);
 
-module.exports = ProductModel;
+module.exports = UserModel;
