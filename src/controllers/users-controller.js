@@ -16,9 +16,15 @@ const fetchAll = async (req, res) => {
   try {
     const userDocuments = await UserModel.find();
 
-    const validationResult = UserModel.validate({
-       
+    console.log('BEFORE');
+    const validationResult = await UserModel.validate({
+       email: 'kjon@gmail.com',
+       password: 'Gubernija789?',
+       img: 'https://pbs.twimg.com/profile_images/378800000822546629/1cee2b888711ac763621327f568a513d_400x400.jpeg,'
     })
+
+    console.log(validationResult);
+    console.log('AFTER');
     
     res.status(200).json(userDocuments);
   } catch (err) {sendErrorResponse(err, res);}

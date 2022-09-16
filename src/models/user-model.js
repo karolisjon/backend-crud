@@ -41,12 +41,10 @@ const userValidationSchema = yup.object({
     .email('user.email format is invalid')
     .test('email-check',
     'Provided email address is already in use',
-    () => {
-      console.log('\n\nUserMode.find\n');
-      console.log(UserModel.find);
-      console.log('\n\n');
+    async (email) => {
+      const foundUsers = await UserModel.findOne({ email });
 
-      return true;
+      return foundUsers === null;
     })
     .required('user.email is mandatory'),
   password: yup
@@ -70,15 +68,15 @@ const userValidationSchema = yup.object({
           Types.ObjectId.isValid)
         .required('user.cart element.productId is mandatory'),
       amount: yup
-        .number().typeError('user.cart.amount must always be a number')
-        .required('user.cart.amount is mandatory')
-    }))
-    .required('user.categoryId is mandatory'),
+        .number().typeError('user.cart element.amount must always be a number')
+        .required('user.cart element.amount is mandatory')
+    })),
+    // .required('user.cart is mandatory'),
   img: yup
     .string().typeError('user.img must always be a string')
 });
 
-userSchema.statics.validate = (userData) => userValidationSchema.validateSync(userData);
+userSchema.statics.validate = (userData) => userValidationSchema.validate(userData);
 
 const UserModel = model('User', userSchema);
 
