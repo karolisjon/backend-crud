@@ -18,9 +18,8 @@ const fetchAll = async (req, res) => {
 
     console.log('BEFORE');
     const validationResult = await UserModel.validate({
-       email: 'kjon@gmail.com',
-       password: 'Gubernija789?',
-       passwordConfirmation: 'Gubernija789?',
+       email: 'kjon2@gmail.com',
+       password: 'Gubernija7890?',
        img: 'https://pbs.twimg.com/profile_images/378800000822546629/1cee2b888711ac763621327f568a513d_400x400.jpeg,'
     })
 
@@ -51,7 +50,7 @@ const post = async (req, res) => {
   const newUserDetails = req.body;
 
   try {
-    UserModel.validate(newUserDetails)
+    await UserModel.validateData(newUserDetails)
 
     const newUser = await UserModel.create(newUserDetails);
 
@@ -65,7 +64,7 @@ const put = async (req, res) => {
   const newUserDetails = req.body;
 
   try {
-    UserModel.validate(newUserDetails)
+    await UserModel.validateData(newUserDetails)
 
     const updatedUser = await UserModel.findByIdAndUpdate(
       userId,

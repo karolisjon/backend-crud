@@ -58,8 +58,7 @@ const userValidationSchema = yup.object({
     .matches(/\W/, 'user.password must contain at least one special symbol'),
   passwordConfirmation: yup
     .string().typeError('user.password must always be a string')
-    .required('user.passwordConfirmation is mandatory')
-    .oneOf([yup.ref('password'), null], 'Provided passwords do not match'),
+    .oneOf([yup.ref('password')], 'Provided passwords do not match'),
   role: yup
     .string().typeError('user.role must always be a string')
     .oneOf(['USER', 'ADMIN']),
@@ -80,7 +79,7 @@ const userValidationSchema = yup.object({
     .string().typeError('user.img must always be a string')
 });
 
-userSchema.statics.validate = (userData) => userValidationSchema.validate(userData);
+userSchema.statics.validateData = (userData) => userValidationSchema.validate(userData);
 
 const UserModel = model('User', userSchema);
 

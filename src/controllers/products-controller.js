@@ -43,7 +43,7 @@ const post = async (req, res) => {
   const newProductDetails = req.body;
 
   try {
-    ProductModel.validate(newProductDetails)
+    await ProductModel.validateData(newProductDetails)
 
     const newProduct = await ProductModel.create(newProductDetails);
 
@@ -57,7 +57,7 @@ const put = async (req, res) => {
   const newProductDetails = req.body;
 
   try {
-    ProductModel.validate(newProductDetails)
+    await ProductModel.validateData(newProductDetails)
 
     const updatedProduct = await ProductModel.findByIdAndUpdate(
       productId,

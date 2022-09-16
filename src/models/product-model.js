@@ -49,7 +49,7 @@ const productValidationSchema = yup.object().shape({
     .required('product.img is mandatory'),
 });
 
-productSchema.statics.validate = (productData) => productValidationSchema.validateSync(productData);
+productSchema.statics.validateData = (productData) => productValidationSchema.validate(productData);
 
 const ProductModel = model('Product', productSchema);
 

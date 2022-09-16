@@ -16,9 +16,6 @@ const propsToJoin = ['categoryId'];
 const fetchAll = async (req, res) => {
   const query = req.query;
 
-  console.log('///////////////////////////////////////')
-  console.log(query);
-
   try {
     const categoryDocuments = await CategoryModel.find() 
     
@@ -43,7 +40,7 @@ const post = async (req, res) => {
   const newCategoryDetails = req.body;
 
   try {
-    CategoryModel.validate(newCategoryDetails)
+    await CategoryModel.validateData(newCategoryDetails)
 
     const newCategory = await CategoryModel.create(newCategoryDetails);
 
@@ -57,7 +54,7 @@ const put = async (req, res) => {
   const newCategoryDetails = req.body;
 
   try {
-    CategoryModel.validate(newCategoryDetails)
+    await CategoryModel.validateData(newCategoryDetails)
 
     const updatedCategory = await CategoryModel.findByIdAndUpdate(
       catId,
