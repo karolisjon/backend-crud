@@ -56,6 +56,10 @@ const userValidationSchema = yup.object({
     .matches(/[A-Z]/, 'user.password must contain at least one uppercase letter')
     .matches(/\d/, 'user.password must contain at least one number')
     .matches(/\W/, 'user.password must contain at least one special symbol'),
+  passwordConfirmation: yup
+    .string().typeError('user.password must always be a string')
+    .required('user.passwordConfirmation is mandatory')
+    .oneOf([yup.ref('password'), null], 'Provided passwords do not match'),
   role: yup
     .string().typeError('user.role must always be a string')
     .oneOf(['USER', 'ADMIN']),

@@ -20,6 +20,7 @@ const fetchAll = async (req, res) => {
     const validationResult = await UserModel.validate({
        email: 'kjon@gmail.com',
        password: 'Gubernija789?',
+       passwordConfirmation: 'Gubernija789?',
        img: 'https://pbs.twimg.com/profile_images/378800000822546629/1cee2b888711ac763621327f568a513d_400x400.jpeg,'
     })
 
