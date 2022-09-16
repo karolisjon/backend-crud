@@ -34,6 +34,15 @@ const userValidationSchema = yup.object({
   email: yup
     .string().typeError('user.email must always be a string')
     .email('user.email format is invalid')
+    .test('email-check',
+    'Provided email address is already in use',
+    () => {
+      console.log('\n\nUserMode.find\n');
+      console.log(UserModel.find);
+      console.log('\n\n');
+      
+      return true;
+    })
     .required('user.email is mandatory'),
   password: yup
     .min(8, 'user.password must contain at least 8 symbols')
@@ -64,3 +73,4 @@ userSchema.statics.validate = (userData) => userValidationSchema.validateSync(us
 const UserModel = model('User', userSchema);
 
 module.exports = UserModel;
+ 
