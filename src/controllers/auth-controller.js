@@ -1,6 +1,6 @@
 const UserModel = require('../models/user-model');
 const { sendErrorResponse } = require('../helpers/errors/index');
-const { comparePasswords } = require('../helpers/hash');
+const { comparePasswords, hashPassword } = require('../helpers/hash');
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -25,7 +25,24 @@ const login = async (req, res) => {
 };
 
 const register = async (req, res) => {
-  res.send('register');
+  const requestData = req.body;
+
+  try {
+    await UserModel.validateData(requestData);
+    const { email, password, img } = requestData;
+
+    const newUser = await UserModel.create({
+      email,
+      password: await hashPassword(password),
+      img,
+    });
+
+    res.status(201).json({
+      user: newUser,
+      token: 'token example test',
+    });
+
+  } catch (err) { sendErrorResponse(err, res); }
 };
 
 module.exports = { login, register };
