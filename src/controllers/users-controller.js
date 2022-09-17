@@ -4,7 +4,7 @@ const {
   createNotFoundErr,
   sendErrorResponse,
 } = require('../helpers/errors/index');
-const { comparePasswords, hashPassword } = require('../helpers/hash.js');
+const { hashPassword } = require('../helpers/hash.js');
 
 const createIdDoesNotExistErr = (userId) =>
   createNotFoundErr(`Product with id '${userId}' does not exist`);
