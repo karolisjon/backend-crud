@@ -80,7 +80,51 @@ const userValidationSchema = yup.object({
     .string().typeError('user.img must always be a string')
 });
 
-userSchema.statics.validateData = (userData) => userValidationSchema.validate(userData);
+const userUpdateValidationSchema = yup.object({
+  email: yup
+    .string().typeError('user.email must always be a string')
+    .email('user.email format is invalid')
+    .test('email-check',
+    'Provided email address is already in use',
+    async (email) => {
+      const foundUsers = await UserModel.findOne({ email });
+
+      return foundUsers === null;
+    }),
+  password: yup
+    .string().typeError('user.password must always be a string')
+    .min(8, 'user.password must contain at least 8 symbols')
+    .max(32, 'user.password must not be longer than 32 symbols')
+    .matches(/[a-z]/, 'user.password must contain at least one lowercase letter')
+    .matches(/[A-Z]/, 'user.password must contain at least one uppercase letter')
+    .matches(/\d/, 'user.password must contain at least one number')
+    .matches(/\W/, 'user.password must contain at least one special symbol'),
+  passwordConfirmation: yup
+    .string().typeError('user.password must always be a string')
+    .oneOf([yup.ref('password')], 'Provided passwords do not match'),
+  role: yup
+    .string().typeError('user.role must always be a string')
+    .oneOf(['USER', 'ADMIN']),
+  cart: yup
+    .array(yup.object({
+      productId: yup
+        .string().typeError('user.cart element.productId must always be a string')
+        .test('is-object-id',
+          'user.cart element.productId must be a valid MongoDB object Id',
+          Types.ObjectId.isValid),
+      amount: yup
+        .number().typeError('user.cart element.amount must always be a number')
+    })),
+    // .required('user.cart is mandatory'),
+  img: yup
+    .string().typeError('user.img must always be a string')
+});
+
+userSchema.statics.validateData = (userData) => 
+userValidationSchema.validate(userData);
+
+userSchema.statics.validateUpdateData = (userData) => 
+userUpdateValidationSchema.validate(userData);
 
 const UserModel = model('User', userSchema);
 

@@ -4,6 +4,7 @@ const {
   fetchOne,
   post,
   put,
+  patch,
   remove,
 } = require('../../controllers/users-controller');
 
@@ -16,6 +17,8 @@ usersRouter.get('/:id', fetchOne);
 usersRouter.post('/', post);
 
 usersRouter.put('/:id', put);
+
+usersRouter.patch('/:id', patch);
 
 usersRouter.delete('/:id', remove);
 

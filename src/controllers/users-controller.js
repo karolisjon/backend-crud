@@ -7,10 +7,10 @@ const {
 const { hashPassword } = require('../helpers/hash.js');
 
 const createIdDoesNotExistErr = (userId) =>
-  createNotFoundErr(`Product with id '${userId}' does not exist`);
+  createNotFoundErr(`User with id '${userId}' does not exist`);
 
 const createInvalidDetailsErr = (dataObj) =>
-  createInvalidDataErr('Provided details about the product are invalid');
+  createInvalidDataErr('Provided details about the user are invalid');
 
 const fetchAll = async (req, res) => {
 
@@ -99,6 +99,39 @@ const put = async (req, res) => {
   } catch (err) { sendErrorResponse(err, res); }
 };
 
+const patch = async (req, res) => {
+  const userId = req.params.id;
+  const requestData = req.body;
+
+  try {
+    await UserModel.validateUpdateData(requestData);
+    const {
+      email,
+      password,
+      role,
+      cart,
+      img,
+    } = requestData;
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        email,
+        password: password && await hashPassword(password),
+        role,
+        cart,
+        img
+      },
+      { new: true }
+    );
+
+    if (updatedUser === null) throw createIdDoesNotExistErr(userId);
+
+    res.status(200).json(updatedUser)
+
+  } catch (err) { sendErrorResponse(err, res); }
+};
+
 const remove = async (req, res) => {
   const userId = req.params.id;
 
@@ -117,5 +150,6 @@ module.exports = {
   fetchOne,
   post,
   put,
+  patch,
   remove,
 };
