@@ -4,14 +4,13 @@ const {
   createNotFoundErr, 
   sendErrorResponse,
 } = require('../helpers/errors/index');
+const { deleteEmptyProps } = require('../helpers');
 
 const createIdDoesNotExistErr = (catId) => 
 createNotFoundErr(`Category with id '${catId}' does not exist`);
 
 const createInvalidDetailsErr = (dataObj) => 
 createInvalidDataErr('Provided details about the category are invalid');
-
-const propsToJoin = ['categoryId'];
 
 const fetchAll = async (req, res) => {
   const query = req.query;
@@ -59,7 +58,9 @@ const put = async (req, res) => {
     const updatedCategory = await CategoryModel.findByIdAndUpdate(
       catId,
       newCategoryDetails,
-      { new: true, runValidators: true }
+      { new: true, 
+        runValidators: true 
+      }
     );
 
     if (updatedCategory === null) throw createIdDoesNotExistErr(catId);
@@ -67,6 +68,26 @@ const put = async (req, res) => {
     res.status(200).json(updatedCategory);
 
   } catch (err) {sendErrorResponse(err, res);}
+};
+
+const patch = async (req, res) => {
+  const catId = req.params.id;
+  const { title, image } = req.body;
+  const newCategoryDetails = deleteEmptyProps({ title, image });
+
+  try {
+    await CategoryModel.validateUpdateData(newCategoryDetails);
+    const updatedCategory = await CategoryModel.findByIdAndUpdate(
+      catId,
+      newCategoryDetails,
+      { new: true }
+    );
+
+    if (updatedCategory === null) throw createIdDoesNotExistErr(catId);
+
+    res.status(200).json(updatedCategory)
+
+  } catch (err) { sendErrorResponse(err, res); }
 };
 
 const remove = async (req, res) => {
@@ -87,5 +108,6 @@ module.exports = {
   fetchOne,
   post,
   put,
+  patch,
   remove,
 };

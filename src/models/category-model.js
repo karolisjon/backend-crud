@@ -23,7 +23,16 @@ const categoryValidationSchema = yup.object().shape({
     .required('category.image is mandatory'),
 });
 
-categorySchema.statics.validateData = (categoryData) => categoryValidationSchema.validate(categoryData);
+const categoryUpdateValidationSchema = yup.object().shape({
+  title: yup.string().typeError('category.title must always be a string'),
+  image: yup.string().typeError('category.image must always be a string')
+});
+
+categorySchema.statics.validateData = (categoryData) => 
+categoryValidationSchema.validate(categoryData);
+
+categorySchema.statics.validateUpdateData = (categoryData) => 
+categoryUpdateValidationSchema.validate(categoryData);
 
 const CategoryModel = model('Category', categorySchema);
 

@@ -4,6 +4,7 @@ const {
   fetchOne,
   post,
   put,
+  patch,
   remove,
 } = require('../../controllers/categories-controller');
 
@@ -16,6 +17,8 @@ categoriesRouter.get('/:id', fetchOne);
 categoriesRouter.post('/', post);
 
 categoriesRouter.put('/:id', put);
+
+categoriesRouter.patch('/:id', patch);
 
 categoriesRouter.delete('/:id', remove);
 
