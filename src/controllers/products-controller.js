@@ -72,6 +72,27 @@ const put = async (req, res) => {
   } catch (err) {sendErrorResponse(err, res);}
 };
 
+const patch = async (req, res) => {
+  const productId = req.params.id;
+  const { title, description, categoryId, price, img } = req.body;
+  const newProductDetails = ({ title, description, categoryId, price, img });
+
+  try {
+    await ProductModel.validateUpdateData(newProductDetails);
+
+    const updatedProduct = await ProductModel.findByIdAndUpdate(
+      productId,
+      newProductDetails,
+      { new: true }
+    );
+
+    if (updatedProduct === null) throw createIdDoesNotExistErr(productId);
+
+    res.status(200).json(updatedProduct)
+
+  } catch (err) { sendErrorResponse(err, res); }
+};
+
 const remove = async (req, res) => {
   const productId = req.params.id;
 
@@ -90,5 +111,6 @@ module.exports = {
   fetchOne,
   post,
   put,
+  patch,
   remove,
 };

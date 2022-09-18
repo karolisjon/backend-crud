@@ -49,7 +49,25 @@ const productValidationSchema = yup.object().shape({
     .required('product.img is mandatory'),
 });
 
-productSchema.statics.validateData = (productData) => productValidationSchema.validate(productData);
+const productUpdateValidationSchema = yup.object().shape({
+  title: yup
+    .string().typeError('product.title must always be a string'),
+  description: yup
+    .string().typeError('product.description must always be a string'),
+  categoryId: yup
+    .string().typeError('product.categoryId must always be a string'),
+  price: yup
+    .number().typeError('product.price must always be a number')
+    .positive('product.price must be more than 0'),
+  img: yup
+    .string().typeError('product.img must always be a string'),
+});
+
+productSchema.statics.validateData = (productData) => 
+productValidationSchema.validate(productData);
+
+productSchema.statics.validateUpdateData = (productData) => 
+productUpdateValidationSchema.validate(productData);
 
 const ProductModel = model('Product', productSchema);
 

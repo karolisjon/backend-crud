@@ -4,6 +4,7 @@ const {
   fetchOne,
   post,
   put,
+  patch,
   remove,
 } = require('../../controllers/products-controller');
 
@@ -16,6 +17,8 @@ productsRouter.get('/:id', fetchOne);
 productsRouter.post('/', post);
 
 productsRouter.put('/:id', put);
+
+productsRouter.patch('/:id', patch);
 
 productsRouter.delete('/:id', remove);
 
