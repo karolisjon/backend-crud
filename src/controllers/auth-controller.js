@@ -1,6 +1,7 @@
 const UserModel = require('../models/user-model');
 const { sendErrorResponse } = require('../helpers/errors/index');
 const { comparePasswords, hashPassword } = require('../helpers/hash');
+const { createToken } = require('../helpers/json-web-token');
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -18,7 +19,7 @@ const login = async (req, res) => {
 
     res.status(200).json({ 
       user: userDoc,
-      token: 'token example test'
+      token: createToken({ email: userDoc.email, role: userDoc.role }),
     });
   } catch (err) { sendErrorResponse(err, res); }
 
@@ -39,7 +40,7 @@ const register = async (req, res) => {
 
     res.status(201).json({
       user: newUser,
-      token: 'token example test',
+      token: createToken({ email: newUser.email, role: newUser.role }),
     });
 
   } catch (err) { sendErrorResponse(err, res); }
