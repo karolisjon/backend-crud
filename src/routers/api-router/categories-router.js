@@ -1,10 +1,10 @@
 const { Router } = require('express');
 const { 
   fetchAll,
-  fetchOne,
-  post,
-  put,
-  patch,
+  fetch,
+  create,
+  replace,
+  update,
   remove,
 } = require('../../controllers/categories-controller');
 
@@ -12,13 +12,13 @@ const categoriesRouter = Router();
 
 categoriesRouter.get('/', fetchAll);
 
-categoriesRouter.get('/:id', fetchOne);
+categoriesRouter.get('/:id', fetch);
 
-categoriesRouter.post('/', post);
+categoriesRouter.post('/', create);
 
-categoriesRouter.put('/:id', put);
+categoriesRouter.put('/:id', replace);
 
-categoriesRouter.patch('/:id', patch);
+categoriesRouter.patch('/:id', update);
 
 categoriesRouter.delete('/:id', remove);
 
