@@ -7,10 +7,11 @@ const {
   patch,
   remove,
 } = require('../../controllers/users-controller');
+const { requireAuth } = require('../../middleware/auth-middleware');
 
 const usersRouter = Router();
 
-usersRouter.get('/', fetchAll);
+usersRouter.get('/', requireAuth, fetchAll);
 
 usersRouter.get('/:id', fetchOne);
 
