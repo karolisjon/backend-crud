@@ -1,10 +1,10 @@
 const { Router } = require('express');
 const { 
   fetchAll,
-  fetchOne,
-  post,
-  put,
-  patch,
+  fetch,
+  create,
+  replace,
+  update,
   remove,
 } = require('../../controllers/products-controller');
 
@@ -12,13 +12,13 @@ const productsRouter = Router();
 
 productsRouter.get('/', fetchAll);
 
-productsRouter.get('/:id', fetchOne);
+productsRouter.get('/:id', fetch);
 
-productsRouter.post('/', post);
+productsRouter.post('/', create);
 
-productsRouter.put('/:id', put);
+productsRouter.put('/:id', replace);
 
-productsRouter.patch('/:id', patch);
+productsRouter.patch('/:id', update);
 
 productsRouter.delete('/:id', remove);
 
