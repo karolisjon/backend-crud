@@ -21,7 +21,7 @@ const fetchAll = async (req, res) => {
   } catch (err) { sendErrorResponse(err, res); }
 };
 
-const fetchOne = async (req, res) => {
+const fetch = async (req, res) => {
   const userId = req.params.id;
 
   try {
@@ -34,7 +34,7 @@ const fetchOne = async (req, res) => {
   } catch (err) { sendErrorResponse(err, res); }
 };
 
-const post = async (req, res) => {
+const create = async (req, res) => {
   const requestData = req.body;
 
   try {
@@ -60,7 +60,7 @@ const post = async (req, res) => {
   } catch (err) { sendErrorResponse(err, res); }
 };
 
-const put = async (req, res) => {
+const replace = async (req, res) => {
   const userId = req.params.id;
   const requestData = req.body;
 
@@ -99,7 +99,7 @@ const put = async (req, res) => {
   } catch (err) { sendErrorResponse(err, res); }
 };
 
-const patch = async (req, res) => {
+const update = async (req, res) => {
   const userId = req.params.id;
   const requestData = req.body;
 
@@ -147,9 +147,9 @@ const remove = async (req, res) => {
 
 module.exports = {
   fetchAll,
-  fetchOne,
-  post,
-  put,
-  patch,
+  fetch,
+  create,
+  replace,
+  update,
   remove,
 };
