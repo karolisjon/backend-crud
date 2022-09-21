@@ -1,38 +1,33 @@
 const CategoryModel = require('../models/category-model');
 const {
-  createInvalidDataErr, 
   createNotFoundErr, 
   sendErrorResponse,
 } = require('../helpers/errors/index');
 const { deleteEmptyProps } = require('../helpers');
 
-const createIdDoesNotExistErr = (catId) => 
-createNotFoundErr(`Category with id '${catId}' does not exist`);
-
-const createInvalidDetailsErr = (dataObj) => 
-createInvalidDataErr('Provided details about the category are invalid');
+const createIdDoesNotExistErr = (categoryId) => 
+createNotFoundErr(`Category with id '${categoryId}' does not exist`);
 
 const fetchAll = async (req, res) => {
-  const query = req.query;
 
   try {
-    const categoryDocuments = await CategoryModel.find() 
+    const categoryDocuments = await CategoryModel.find();
     
     res.status(200).json(categoryDocuments);
-  } catch (err) {sendErrorResponse(err, res);}
+  } catch (err) { sendErrorResponse(err, res); }
 };
 
 const fetch = async (req, res) => {
-  const catId = req.params.id;
+  const categoryId = req.params.id;
 
   try {
-    const category = await CategoryModel.findById(catId);
+    const category = await CategoryModel.findById(categoryId);
 
-    if (category === null) throw createIdDoesNotExistErr(catId);
+    if (category === null) throw createIdDoesNotExistErr(categoryId);
 
     res.status(200).json(category);
 
-  } catch (err) {sendErrorResponse(err, res);}
+  } catch (err) { sendErrorResponse(err, res); }
 };
 
 const create = async (req, res) => {
@@ -49,21 +44,22 @@ const create = async (req, res) => {
 };
 
 const replace = async (req, res) => {
-  const catId = req.params.id;
+  const categoryId = req.params.id;
   const newCategoryDetails = req.body;
 
   try {
     await CategoryModel.validateData(newCategoryDetails)
 
     const updatedCategory = await CategoryModel.findByIdAndUpdate(
-      catId,
+      categoryId,
       newCategoryDetails,
-      { new: true, 
-        runValidators: true 
+      { 
+        new: true, 
+        runValidators: true,
       }
     );
 
-    if (updatedCategory === null) throw createIdDoesNotExistErr(catId);
+    if (updatedCategory === null) throw createIdDoesNotExistErr(categoryId);
 
     res.status(200).json(updatedCategory);
 
@@ -71,19 +67,19 @@ const replace = async (req, res) => {
 };
 
 const update = async (req, res) => {
-  const catId = req.params.id;
+  const categoryId = req.params.id;
   const { title, image } = req.body;
   const newCategoryDetails = deleteEmptyProps({ title, image });
 
   try {
     await CategoryModel.validateUpdateData(newCategoryDetails);
     const updatedCategory = await CategoryModel.findByIdAndUpdate(
-      catId,
+      categoryId,
       newCategoryDetails,
-      { new: true }
+      { new: true },
     );
 
-    if (updatedCategory === null) throw createIdDoesNotExistErr(catId);
+    if (updatedCategory === null) throw createIdDoesNotExistErr(categoryId);
 
     res.status(200).json(updatedCategory)
 
@@ -91,12 +87,12 @@ const update = async (req, res) => {
 };
 
 const remove = async (req, res) => {
-  const catId = req.params.id;
+  const categoryId = req.params.id;
 
   try {
-    const removedCategory = await CategoryModel.findByIdAndDelete(catId);
+    const removedCategory = await CategoryModel.findByIdAndDelete(categoryId);
 
-    if (removedCategory === null) throw createIdDoesNotExistErr(catId);
+    if (removedCategory === null) throw createIdDoesNotExistErr(categoryId);
 
     res.status(200).json(removedCategory);
     

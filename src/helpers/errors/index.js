@@ -23,12 +23,11 @@ const sendErrorResponse = (err, res) => {
       status = err.statusCode;
   } else {
       message =  'Request handler error occurred';
-      status = 400;
   }
 
   res.status(status).json({message});
 };
-;
+
 const errorCreators = {
   RequestError,
   createInvalidDataErr,
