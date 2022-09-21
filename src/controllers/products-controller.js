@@ -1,15 +1,11 @@
 const ProductModel = require('../models/product-model');
 const {
-  createInvalidDataErr, 
   createNotFoundErr, 
   sendErrorResponse,
 } = require('../helpers/errors/index');
 
 const createIdDoesNotExistErr = (productId) => 
 createNotFoundErr(`Product with id '${productId}' does not exist`);
-
-const createInvalidDetailsErr = (dataObj) => 
-createInvalidDataErr('Provided details about the product are invalid');
 
 const fetchAll = async (req, res) => {
   const { joinBy } = req.query;
@@ -62,7 +58,10 @@ const replace = async (req, res) => {
     const updatedProduct = await ProductModel.findByIdAndUpdate(
       productId,
       newProductDetails,
-      { new: true, runValidators: true }
+      { 
+        new: true, 
+        runValidators: true,
+      }
     );
 
     if (updatedProduct === null) throw createIdDoesNotExistErr(productId);
