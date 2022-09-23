@@ -9,11 +9,9 @@ createNotFoundErr(`Product with id '${productId}' does not exist`);
 
 const fetchAll = async (req, res) => {
   const { joinBy } = req.query;
+  let productDocuments = await ProductModel.find();
   
   try {
-
-    let productDocuments = await ProductModel.find();
-
     if (joinBy === 'categoryId') {
       productDocuments = await ProductModel.find().populate('categoryId');
     } else if (joinBy === 'woodTypeId') {
@@ -29,11 +27,17 @@ const fetchAll = async (req, res) => {
 const fetch = async (req, res) => {
   const productId = req.params.id;
   const { joinBy } = req.query;
+  let product = await ProductModel.findById(productId);
 
   try {
-    const product = joinBy === 'categoryId'
-    ? await ProductModel.findById(productId).populate('categoryId')
-    : await ProductModel.findById(productId);
+
+    if (joinBy === 'categoryId') {
+      product = await ProductModel.findById(productId).populate('categoryId');
+    } else if (joinBy === 'woodTypeId') {
+      product = await ProductModel.findById(productId).populate('woodTypeId');
+    } else if (joinBy instanceof Array) {
+      product = await ProductModel.findById(productId).populate('categoryId').populate('woodTypeId');
+    }
 
     if (product === null) throw createIdDoesNotExistErr(productId);
 
