@@ -11,9 +11,11 @@ const fetchAll = async (req, res) => {
   const { joinBy } = req.query;
   
   try {
-    const productDocuments = joinBy === 'categoryId'
-    ? await ProductModel.find().populate('categoryId')
+    const productDocuments = joinBy === 'categoryId' || 'woodTypeId'
+    ? await ProductModel.find().populate('categoryId', 'title').populate('woodTypeId', 'title')
     : await ProductModel.find();
+
+    console.log(req.query);
     
     res.status(200).json(productDocuments);
   } catch (err) {sendErrorResponse(err, res);}

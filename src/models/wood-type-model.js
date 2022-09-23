@@ -12,12 +12,12 @@ const woodTypeSchema = Schema({
 
 const woodTypeValidationSchema = yup.object().shape({
   title: yup
-    .string('woodType.title must always be a string')
-    .required('woodType.title is mandatory'),
+    .string('wood.title must always be a string')
+    .required('wood.title is mandatory'),
 });
 
 const woodTypeUpdateValidationSchema = yup.object().shape({
-  title: yup.string().typeError('woodType.title must always be a string'),
+  title: yup.string().typeError('wood.title must always be a string'),
 });
 
 woodTypeSchema.statics.validateData = (woodTypeData) => 

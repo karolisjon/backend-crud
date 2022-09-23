@@ -23,6 +23,11 @@ const productSchema = Schema({
     type: String,
     required: true,
   },
+  woodTypeId: {
+    type: Schema.Types.ObjectId,
+    ref: 'WoodType',
+    required: true,
+  },
 }, {
   timestamps: true
 });
@@ -47,6 +52,12 @@ const productValidationSchema = yup.object().shape({
   img: yup
     .string().typeError('product.img must always be a string')
     .required('product.img is mandatory'),
+  woodTypeId: yup
+    .string().typeError('product.woodTypeId must always be a string')
+    .test('is-object-id', 
+    'product.woodTypeId must be a valid MongoDB object Id',
+    Types.ObjectId.isValid)
+    .required('product.woodTypeId is mandatory'),
 });
 
 const productUpdateValidationSchema = yup.object().shape({
@@ -61,6 +72,8 @@ const productUpdateValidationSchema = yup.object().shape({
     .positive('product.price must be more than 0'),
   img: yup
     .string().typeError('product.img must always be a string'),
+  woodTypeId: yup
+    .string().typeError('product.woodTypeId must always be a string')
 });
 
 productSchema.statics.validateData = (productData) => 
