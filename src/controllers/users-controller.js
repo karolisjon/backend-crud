@@ -1,23 +1,20 @@
 const UserModel = require('../models/user-model');
 const {
-  createInvalidDataErr,
   createNotFoundErr,
   sendErrorResponse,
 } = require('../helpers/errors/index');
 const { hashPassword } = require('../helpers/hash.js');
+const userViewModel = require('../view-models/user-view-model');
 
 const createIdDoesNotExistErr = (userId) =>
   createNotFoundErr(`User with id '${userId}' does not exist`);
-
-const createInvalidDetailsErr = (dataObj) =>
-  createInvalidDataErr('Provided details about the user are invalid');
 
 const fetchAll = async (req, res) => {
 
   try {
     const userDocuments = await UserModel.find();
 
-    res.status(200).json(userDocuments);
+    res.status(200).json(userDocuments.map(userViewModel));
   } catch (err) { sendErrorResponse(err, res); }
 };
 
@@ -29,7 +26,7 @@ const fetch = async (req, res) => {
 
     if (user === null) throw createIdDoesNotExistErr(userId);
 
-    res.status(200).json(user);
+    res.status(200).json(userViewModel(user));
 
   } catch (err) { sendErrorResponse(err, res); }
 };
@@ -55,7 +52,7 @@ const create = async (req, res) => {
       img
     });
 
-    res.status(201).json(newUser);
+    res.status(201).json(userViewModel(newUser));
 
   } catch (err) { sendErrorResponse(err, res); }
 };
@@ -94,7 +91,7 @@ const replace = async (req, res) => {
       }
     );
 
-    res.status(200).json(replacedUserDoc);
+    res.status(200).json(userViewModel(replacedUserDoc));
 
   } catch (err) { sendErrorResponse(err, res); }
 };
@@ -127,7 +124,7 @@ const update = async (req, res) => {
 
     if (updatedUser === null) throw createIdDoesNotExistErr(userId);
 
-    res.status(200).json(updatedUser)
+    res.status(200).json(userViewModel(updatedUser))
 
   } catch (err) { sendErrorResponse(err, res); }
 };
@@ -140,7 +137,7 @@ const remove = async (req, res) => {
 
     if (removedUser === null) throw createIdDoesNotExistErr(userId);
 
-    res.status(200).json(removedUser);
+    res.status(200).json(userViewModel(removedUser));
 
   } catch (err) { sendErrorResponse(err, res); }
 };

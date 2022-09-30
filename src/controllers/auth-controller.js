@@ -2,6 +2,7 @@ const UserModel = require('../models/user-model');
 const { sendErrorResponse } = require('../helpers/errors/index');
 const { comparePasswords, hashPassword } = require('../helpers/hash');
 const { createToken } = require('../helpers/json-web-token');
+const userViewModel = require('../view-models/user-view-model');
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -18,7 +19,7 @@ const login = async (req, res) => {
     if (!passwordsMatch) throw new Error('Login failed. The password you entered is incorrect');
 
     res.status(200).json({ 
-      user: userDoc,
+      user: userViewModel(userDoc),
       token: createToken({ email: userDoc.email, role: userDoc.role }),
     });
   } catch (err) { sendErrorResponse(err, res); }
@@ -39,7 +40,7 @@ const register = async (req, res) => {
     });
 
     res.status(201).json({
-      user: newUser,
+      user: userViewModel(newUser),
       token: createToken({ email: newUser.email, role: newUser.role }),
     });
 

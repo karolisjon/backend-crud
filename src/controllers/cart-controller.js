@@ -1,7 +1,6 @@
 const { sendErrorResponse, createInvalidDataErr } = require('../helpers/errors');
 const UserModel = require('../models/user-model');
 const cartViewModel = require('../view-models/cart-view-model');
-const { createNotFoundError } = require('../helpers/errors/index');
 
 const findProduct = (cart, id) => cart.find((product) => product.productId.toString() === id);
 

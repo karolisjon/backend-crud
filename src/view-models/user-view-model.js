@@ -6,6 +6,8 @@ const userViewModel = (userDocument) => ({
   role: userDocument.role,
   cart: userDocument.cart.map(cartViewModel),
   img: userDocument.img,
+  createdAt: userDocument.createdAt,
+  updatedAt: userDocument.updatedAt,
 })
 
 module.exports = userViewModel;
