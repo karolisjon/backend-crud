@@ -14,15 +14,10 @@ const usersRouter = Router();
 usersRouter.use(requireAdmin);
 
 usersRouter.get('/', fetchAll);
-
 usersRouter.get('/:id', fetch);
-
 usersRouter.post('/', create);
-
 usersRouter.put('/:id', replace);
-
 usersRouter.patch('/:id', update);
-
 usersRouter.delete('/:id', remove);
 
 module.exports = usersRouter;

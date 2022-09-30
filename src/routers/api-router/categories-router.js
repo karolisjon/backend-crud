@@ -11,15 +11,10 @@ const {
 const categoriesRouter = Router();
 
 categoriesRouter.get('/', fetchAll);
-
 categoriesRouter.get('/:id', fetch);
-
 categoriesRouter.post('/', create);
-
 categoriesRouter.put('/:id', replace);
-
 categoriesRouter.patch('/:id', update);
-
 categoriesRouter.delete('/:id', remove);
 
 module.exports = categoriesRouter;
