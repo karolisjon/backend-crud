@@ -6,7 +6,7 @@ const { createNotFoundError } = require('../helpers/errors/index');
 const findProduct = (cart, id) => cart.find((product) => product.productId.toString() === id);
 
 const fetchAll = async (req, res) => {
-  res.status(200).json(req.authUser.cart);
+  res.status(200).json(req.authUser.cart.map(cartViewModel));
 };
 
 const create = async (req, res) => {
@@ -44,7 +44,7 @@ const update = async (req, res) => {
 
     await req.authUser.save();
 
-    res.status(200).json(foundProduct);
+    res.status(200).json(cartViewModel(foundProduct));
   } catch (error) {
     sendErrorResponse(error, res);
   }
@@ -55,7 +55,7 @@ const remove = async (req, res) => {
   
   try {
     const foundProduct = findProduct(req.authUser.cart, productId);
-    if (!foundProduct) throw createNotFoundError('Product does not exist in cart');
+    if (!foundProduct) throw createInvalidDataErr('Product does not exist in cart');
 
     req.authUser.cart = req.authUser.cart.filter(product =>
       product.productId.toString() !== productId);
