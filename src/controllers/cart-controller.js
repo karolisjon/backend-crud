@@ -1,6 +1,7 @@
-const { sendErrorResponse } = require('../helpers/errors');
+const { sendErrorResponse, createInvalidDataErr } = require('../helpers/errors');
 const UserModel = require('../models/user-model');
 const cartViewModel = require('../view-models/cart-view-model');
+const { createNotFoundError } = require('../helpers/errors/index');
 
 const findProduct = (cart, id) => cart.find((product) => product.productId.toString() === id);
 
@@ -14,13 +15,15 @@ const create = async (req, res) => {
   try {
     await UserModel.validateCart(data);
 
+    const foundProduct = findProduct(req.authUser.cart, data.productId);
+    if (foundProduct) throw createInvalidDataErr('This product is already in the cart');
     const newProductInCart = {
       productId: data.productId,
       amount: data.amount,
     }
 
     req.authUser.cart.push(newProductInCart);
-    req.authUser.save();
+    await req.authUser.save();
     res.status(200).json(newProductInCart);
   } catch (error) {
     sendErrorResponse(error, res);
@@ -28,26 +31,38 @@ const create = async (req, res) => {
 };
 
 const update = async (req, res) => {
+  const data = req.body;
+
   try {
-    
-    res.status(200).json(req.authUser.cart);
+    await UserModel.validateCart(data);
+
+    const foundProduct = findProduct(req.authUser.cart, data.productId);
+
+    if (!foundProduct) throw createInvalidDataErr('Product with this id was not found in cart');
+
+    foundProduct.amount = data.amount;
+
+    await req.authUser.save();
+
+    res.status(200).json(foundProduct);
   } catch (error) {
     sendErrorResponse(error, res);
   }
 };
 
 const remove = async (req, res) => {
-const productId = req.params.id;
-
+  const productId = req.params.id;
+  
   try {
-    const foundProductInCart = findProduct(req.authUser.cart, productId);
-    if (!foundProductInCart) throw createNotFoundError('Product does not exist in cart');
+    const foundProduct = findProduct(req.authUser.cart, productId);
+    if (!foundProduct) throw createNotFoundError('Product does not exist in cart');
 
-    req.authUser.cart = req.authUser.cart.filter(x => x.productId.toString() !== productId);
+    req.authUser.cart = req.authUser.cart.filter(product =>
+      product.productId.toString() !== productId);
 
     await req.authUser.save();
 
-    res.status(200).json(cartViewModel(foundProductInCart));
+    res.status(200).json(cartViewModel(foundProduct));
   } catch (error) {
     sendErrorResponse(error, res)
   }

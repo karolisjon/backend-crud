@@ -51,7 +51,8 @@ const cartValidationSchema = yup.object({
       }),
   amount: yup
     .number().typeError('user.cart element.amount must always be a number')
-    .positive('user.cart element.amount should be more than 0')
+    .positive('user.cart element.amount must be more than 0')
+    .integer('user.cart element.amount must be an integer')
     .required('cart.amount is mandatory')
 });
 
