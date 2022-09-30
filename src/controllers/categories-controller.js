@@ -4,6 +4,7 @@ const {
   sendErrorResponse,
 } = require('../helpers/errors/index');
 const { deleteEmptyProps } = require('../helpers');
+const categoryViewModel = require('../view-models/category-view-model');
 
 const createIdDoesNotExistErr = (categoryId) => 
 createNotFoundErr(`Category with id '${categoryId}' does not exist`);
@@ -13,7 +14,7 @@ const fetchAll = async (req, res) => {
   try {
     const categoryDocuments = await CategoryModel.find();
     
-    res.status(200).json(categoryDocuments);
+    res.status(200).json(categoryDocuments.map(categoryViewModel));
   } catch (err) { sendErrorResponse(err, res); }
 };
 
@@ -25,7 +26,7 @@ const fetch = async (req, res) => {
 
     if (category === null) throw createIdDoesNotExistErr(categoryId);
 
-    res.status(200).json(category);
+    res.status(200).json(categoryViewModel(category));
 
   } catch (err) { sendErrorResponse(err, res); }
 };
@@ -38,7 +39,7 @@ const create = async (req, res) => {
 
     const newCategory = await CategoryModel.create(newCategoryDetails);
 
-    res.status(201).json(newCategory);
+    res.status(201).json(categoryViewModel(newCategory));
 
   } catch (err) {sendErrorResponse(err, res);}
 };
@@ -61,7 +62,7 @@ const replace = async (req, res) => {
 
     if (updatedCategory === null) throw createIdDoesNotExistErr(categoryId);
 
-    res.status(200).json(updatedCategory);
+    res.status(200).json(categoryViewModel(updatedCategory));
 
   } catch (err) {sendErrorResponse(err, res);}
 };
@@ -81,7 +82,7 @@ const update = async (req, res) => {
 
     if (updatedCategory === null) throw createIdDoesNotExistErr(categoryId);
 
-    res.status(200).json(updatedCategory)
+    res.status(200).json(categoryViewModel(updatedCategory))
 
   } catch (err) { sendErrorResponse(err, res); }
 };
@@ -94,7 +95,7 @@ const remove = async (req, res) => {
 
     if (removedCategory === null) throw createIdDoesNotExistErr(categoryId);
 
-    res.status(200).json(removedCategory);
+    res.status(200).json(categoryViewModel(removedCategory));
     
   } catch (err) {sendErrorResponse(err, res);}
 };
