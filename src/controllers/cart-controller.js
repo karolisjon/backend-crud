@@ -56,9 +56,7 @@ const productId = req.params.id;
 
 module.exports = {
   fetchAll,
-  fetch,
   create,
-  replace,
   update,
   remove,
 };
