@@ -8,10 +8,6 @@ const fetchAll = async (req, res) => {
   res.status(200).json(req.authUser.cart);
 };
 
-const fetch = async (req, res) => {
-  res.status(200).json(req.authUser.cart);
-};
-
 const create = async (req, res) => {
   const data = req.body;
 
@@ -26,15 +22,6 @@ const create = async (req, res) => {
     req.authUser.cart.push(newProductInCart);
     req.authUser.save();
     res.status(200).json(newProductInCart);
-  } catch (error) {
-    sendErrorResponse(error, res);
-  }
-};
-
-const replace = async (req, res) => {
-  try {
-    
-    res.status(200).json(req.authUser.cart);
   } catch (error) {
     sendErrorResponse(error, res);
   }
