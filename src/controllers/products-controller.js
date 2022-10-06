@@ -3,6 +3,8 @@ const {
   createNotFoundErr, 
   sendErrorResponse,
 } = require('../helpers/errors/index');
+const productViewModel = require('../view-models/product-view-model');
+const productPopulatedViewModel = require('../view-models/product-populated-view-model');
 
 const createIdDoesNotExistErr = (productId) => 
 createNotFoundErr(`Product with id '${productId}' does not exist`);
@@ -10,38 +12,54 @@ createNotFoundErr(`Product with id '${productId}' does not exist`);
 const fetchAll = async (req, res) => {
   const { joinBy } = req.query;
   let productDocuments = await ProductModel.find();
+  const joinedByCategory = joinBy === 'categoryId';
+  const joinedByWoodType = joinBy === 'woodTypeId';
+  const joinedByCategoryAndWoodType = joinBy instanceof Array;
   
   try {
-    if (joinBy === 'categoryId') {
+    if (joinedByCategory) {
       productDocuments = await ProductModel.find().populate('categoryId');
-    } else if (joinBy === 'woodTypeId') {
+    } else if (joinedByWoodType) {
       productDocuments = await ProductModel.find().populate('woodTypeId');
-    } else if (joinBy instanceof Array) {
+    } else if (joinedByCategoryAndWoodType) {
       productDocuments = await ProductModel.find().populate('categoryId').populate('woodTypeId');
     } else await ProductModel.find();
 
-    res.status(200).json(productDocuments);
+    res.status(200).json(
+      joinedByCategory ? productDocuments.map(productPopulatedViewModel) :
+      joinedByWoodType ? productDocuments.map(productPopulatedViewModel) :
+      joinedByCategoryAndWoodType ? productDocuments.map(productPopulatedViewModel) :
+      productDocuments.map(productViewModel)
+      );
   } catch (err) {sendErrorResponse(err, res);}
 };
 
 const fetch = async (req, res) => {
   const productId = req.params.id;
   const { joinBy } = req.query;
-  let product = await ProductModel.findById(productId);
+  let productDocument = await ProductModel.findById(productId);
+  const joinedByCategory = joinBy === 'categoryId';
+  const joinedByWoodType = joinBy === 'woodTypeId';
+  const joinedByCategoryAndWoodType = joinBy instanceof Array;
 
   try {
 
-    if (joinBy === 'categoryId') {
-      product = await ProductModel.findById(productId).populate('categoryId');
-    } else if (joinBy === 'woodTypeId') {
-      product = await ProductModel.findById(productId).populate('woodTypeId');
-    } else if (joinBy instanceof Array) {
-      product = await ProductModel.findById(productId).populate('categoryId').populate('woodTypeId');
+    if (joinedByCategory) {
+      productDocument = await ProductModel.findById(productId).populate('categoryId');
+    } else if (joinedByWoodType) {
+      productDocument = await ProductModel.findById(productId).populate('woodTypeId');
+    } else if (joinedByCategoryAndWoodType) {
+      productDocument = await ProductModel.findById(productId).populate('categoryId').populate('woodTypeId');
     }
 
-    if (product === null) throw createIdDoesNotExistErr(productId);
+    if (productDocument === null) throw createIdDoesNotExistErr(productId);
 
-    res.status(200).json(product);
+    res.status(200).json(
+      joinedByCategory ? productPopulatedViewModel(productDocument) :
+      joinedByWoodType ? productPopulatedViewModel(productDocument) :
+      joinedByCategoryAndWoodType ? productPopulatedViewModel(productDocument) :
+      productViewModel(productDocument)
+    );
 
   } catch (err) {sendErrorResponse(err, res);}
 };
@@ -54,7 +72,7 @@ const create = async (req, res) => {
 
     const newProduct = await ProductModel.create(newProductDetails);
 
-    res.status(201).json(newProduct);
+    res.status(201).json(productViewModel(newProduct));
 
   } catch (err) {sendErrorResponse(err, res);}
 };
@@ -77,7 +95,7 @@ const replace = async (req, res) => {
 
     if (updatedProduct === null) throw createIdDoesNotExistErr(productId);
 
-    res.status(200).json(updatedProduct);
+    res.status(200).json(productViewModel(updatedProduct));
 
   } catch (err) {sendErrorResponse(err, res);}
 };
@@ -98,7 +116,7 @@ const update = async (req, res) => {
 
     if (updatedProduct === null) throw createIdDoesNotExistErr(productId);
 
-    res.status(200).json(updatedProduct)
+    res.status(200).json(productViewModel(updatedProduct))
 
   } catch (err) { sendErrorResponse(err, res); }
 };
@@ -111,7 +129,7 @@ const remove = async (req, res) => {
 
     if (removedProduct === null) throw createIdDoesNotExistErr(productId);
 
-    res.status(200).json(removedProduct);
+    res.status(200).json(productViewModel(removedProduct));
     
   } catch (err) {sendErrorResponse(err, res);}
 };
