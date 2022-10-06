@@ -4,7 +4,9 @@ const {
   sendErrorResponse,
 } = require('../helpers/errors/index');
 const productViewModel = require('../view-models/product-view-model');
-const productPopulatedViewModel = require('../view-models/product-populated-view-model');
+const productCategoryPopulatedViewModel = require('../view-models/product-category-view-model');
+const productWoodTypePopulatedViewModel = require('../view-models/product-wood-type-view-model');
+const productEverythingPopulatedViewModel = require('../view-models/product-everything-populated-view-model');
 
 const createIdDoesNotExistErr = (productId) => 
 createNotFoundErr(`Product with id '${productId}' does not exist`);
@@ -14,21 +16,21 @@ const fetchAll = async (req, res) => {
   let productDocuments = await ProductModel.find();
   const joinedByCategory = joinBy === 'categoryId';
   const joinedByWoodType = joinBy === 'woodTypeId';
-  const joinedByCategoryAndWoodType = joinBy instanceof Array;
+  const joinedByEverything = joinBy instanceof Array;
   
   try {
     if (joinedByCategory) {
       productDocuments = await ProductModel.find().populate('categoryId');
     } else if (joinedByWoodType) {
       productDocuments = await ProductModel.find().populate('woodTypeId');
-    } else if (joinedByCategoryAndWoodType) {
+    } else if (joinedByEverything) {
       productDocuments = await ProductModel.find().populate('categoryId').populate('woodTypeId');
     } else await ProductModel.find();
 
     res.status(200).json(
-      joinedByCategory ? productDocuments.map(productPopulatedViewModel) :
-      joinedByWoodType ? productDocuments.map(productPopulatedViewModel) :
-      joinedByCategoryAndWoodType ? productDocuments.map(productPopulatedViewModel) :
+      joinedByCategory ? productDocuments.map(productCategoryPopulatedViewModel) :
+      joinedByWoodType ? productDocuments.map(productWoodTypePopulatedViewModel) :
+      joinedByEverything ? productDocuments.map(productEverythingPopulatedViewModel) :
       productDocuments.map(productViewModel)
       );
   } catch (err) {sendErrorResponse(err, res);}
@@ -40,7 +42,7 @@ const fetch = async (req, res) => {
   let productDocument = await ProductModel.findById(productId);
   const joinedByCategory = joinBy === 'categoryId';
   const joinedByWoodType = joinBy === 'woodTypeId';
-  const joinedByCategoryAndWoodType = joinBy instanceof Array;
+  const joinedByEverything = joinBy instanceof Array;
 
   try {
 
@@ -48,16 +50,16 @@ const fetch = async (req, res) => {
       productDocument = await ProductModel.findById(productId).populate('categoryId');
     } else if (joinedByWoodType) {
       productDocument = await ProductModel.findById(productId).populate('woodTypeId');
-    } else if (joinedByCategoryAndWoodType) {
+    } else if (joinedByEverything) {
       productDocument = await ProductModel.findById(productId).populate('categoryId').populate('woodTypeId');
     }
 
     if (productDocument === null) throw createIdDoesNotExistErr(productId);
 
     res.status(200).json(
-      joinedByCategory ? productPopulatedViewModel(productDocument) :
-      joinedByWoodType ? productPopulatedViewModel(productDocument) :
-      joinedByCategoryAndWoodType ? productPopulatedViewModel(productDocument) :
+      joinedByCategory ? productCategoryPopulatedViewModel(productDocument) :
+      joinedByWoodType ? productWoodTypePopulatedViewModel(productDocument) :
+      joinedByEverything ? productEverythingPopulatedViewModel(productDocument) :
       productViewModel(productDocument)
     );
 
