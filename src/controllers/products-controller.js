@@ -56,6 +56,8 @@ const fetch = async (req, res) => {
 
     if (productDocument === null) throw createIdDoesNotExistErr(productId);
 
+    console.log('productId', productId);
+
     res.status(200).json(
       joinedByCategory ? productCategoryPopulatedViewModel(productDocument) :
       joinedByWoodType ? productWoodTypePopulatedViewModel(productDocument) :
