@@ -1,6 +1,6 @@
 const ProductModel = require('../models/product-model');
 const {
-  createNotFoundErr, 
+  createNotFoundErr,
   sendErrorResponse,
 } = require('../helpers/errors/index');
 const productViewModel = require('../view-models/product-view-model');
@@ -8,8 +8,8 @@ const productCategoryPopulatedViewModel = require('../view-models/product-catego
 const productWoodTypePopulatedViewModel = require('../view-models/product-wood-type-view-model');
 const productEverythingPopulatedViewModel = require('../view-models/product-everything-populated-view-model');
 
-const createIdDoesNotExistErr = (productId) => 
-createNotFoundErr(`Product with id '${productId}' does not exist`);
+const createIdDoesNotExistErr = (productId) =>
+  createNotFoundErr(`Product with id '${productId}' does not exist`);
 
 const fetchAll = async (req, res) => {
   const { joinBy } = req.query;
@@ -17,7 +17,7 @@ const fetchAll = async (req, res) => {
   const joinedByCategory = joinBy === 'categoryId';
   const joinedByWoodType = joinBy === 'woodTypeId';
   const joinedByEverything = joinBy instanceof Array;
-  
+
   try {
     if (joinedByCategory) {
       productDocuments = await ProductModel.find().populate('categoryId');
@@ -29,23 +29,24 @@ const fetchAll = async (req, res) => {
 
     res.status(200).json(
       joinedByCategory ? productDocuments.map(productCategoryPopulatedViewModel) :
-      joinedByWoodType ? productDocuments.map(productWoodTypePopulatedViewModel) :
-      joinedByEverything ? productDocuments.map(productEverythingPopulatedViewModel) :
-      productDocuments.map(productViewModel)
-      );
-  } catch (err) {sendErrorResponse(err, res);}
+        joinedByWoodType ? productDocuments.map(productWoodTypePopulatedViewModel) :
+          joinedByEverything ? productDocuments.map(productEverythingPopulatedViewModel) :
+            productDocuments.map(productViewModel)
+    );
+  } catch (err) { sendErrorResponse(err, res); }
 };
 
 const fetch = async (req, res) => {
   const productId = req.params.id;
   const { joinBy } = req.query;
+
   let productDocument = await ProductModel.findById(productId);
+  
   const joinedByCategory = joinBy === 'categoryId';
   const joinedByWoodType = joinBy === 'woodTypeId';
   const joinedByEverything = joinBy instanceof Array;
 
   try {
-
     if (joinedByCategory) {
       productDocument = await ProductModel.findById(productId).populate('categoryId');
     } else if (joinedByWoodType) {
@@ -54,9 +55,9 @@ const fetch = async (req, res) => {
       productDocument = await ProductModel.findById(productId).populate('categoryId').populate('woodTypeId');
     }
 
-    if (productDocument === null) throw createIdDoesNotExistErr(productId);
+    if (productDocument === null || productDocument === undefined) throw createNotFoundErr(productId);
 
-    console.log('productId', productId);
+    console.log('--------------------- PRODUCT ID', productId);
 
     res.status(200).json(
       joinedByCategory ? productCategoryPopulatedViewModel(productDocument) :
@@ -68,6 +69,7 @@ const fetch = async (req, res) => {
   } catch (err) {sendErrorResponse(err, res);}
 };
 
+
 const create = async (req, res) => {
   const newProductDetails = req.body;
 
@@ -78,7 +80,7 @@ const create = async (req, res) => {
 
     res.status(201).json(productViewModel(newProduct));
 
-  } catch (err) {sendErrorResponse(err, res);}
+  } catch (err) { sendErrorResponse(err, res); }
 };
 
 const replace = async (req, res) => {
@@ -91,8 +93,8 @@ const replace = async (req, res) => {
     const updatedProduct = await ProductModel.findByIdAndUpdate(
       productId,
       newProductDetails,
-      { 
-        new: true, 
+      {
+        new: true,
         runValidators: true,
       }
     );
@@ -101,7 +103,7 @@ const replace = async (req, res) => {
 
     res.status(200).json(productViewModel(updatedProduct));
 
-  } catch (err) {sendErrorResponse(err, res);}
+  } catch (err) { sendErrorResponse(err, res); }
 };
 
 const update = async (req, res) => {
@@ -134,8 +136,8 @@ const remove = async (req, res) => {
     if (removedProduct === null) throw createIdDoesNotExistErr(productId);
 
     res.status(200).json(productViewModel(removedProduct));
-    
-  } catch (err) {sendErrorResponse(err, res);}
+
+  } catch (err) { sendErrorResponse(err, res); }
 };
 
 module.exports = {
