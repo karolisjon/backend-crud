@@ -1,4 +1,4 @@
-# Front-end of KJ Woodwork MERN application - e-shop
+# Back-end of KJ Woodwork MERN application - e-shop
 Final project for CodeAcademy Front-End courses. This is an e-shop MERN application. However, this project is not fully finished. It lacks authorization, CRUD functionality for admins and filtering or products in the catalog. 
 
 Libraries/frameworks used: 
