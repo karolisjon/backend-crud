@@ -9,7 +9,6 @@ Libraries/frameworks used:
 - Node.js
 - Express.js
 
-## open server folder using VS Code or another code editor application
 ## install dependencies
 ```
 npm i
