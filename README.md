@@ -9,11 +9,11 @@ Libraries/frameworks used:
 - Node.js
 - Express.js
 
-## install dependencies
+## 1. Install dependencies
 ```
 npm i
 ```
-## launch server
+## 2. Launch server
 ```
 npm run start
 ```
